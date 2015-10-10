@@ -1,6 +1,6 @@
 class TicTacToe:
 
-    main_dic = {1:'X', 2:'O'}
+    main_dic = {0:'', 1:'X', 2:'O'}
 
     def __init__(self):
         self.board = [0 for i in range(9)]
