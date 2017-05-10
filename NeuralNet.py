@@ -1,5 +1,5 @@
 # Matthew Steed
-# Code for Deep Learning Assignment 1
+# Code for neural network
 
 import numpy as np
 from scipy.misc import logsumexp
@@ -100,7 +100,6 @@ class HiddenLayer:
     return
  
 
-
 # Definition of tanh activation layer for neural net
 class TanhLayer:
   def __init__(self):
@@ -189,7 +188,6 @@ class ReluLayer:
     return
  
 
-
 # Definition of Dropout layer for training
 class Dropout:
   def __init__(self, parameter):
@@ -252,7 +250,7 @@ class Dropout:
 #       the softmax function to that output
 class SoftmaxLayer:
   def __init__(self):
-    return
+    pass
 
   def forward(self, input, labels):
     """
@@ -260,7 +258,7 @@ class SoftmaxLayer:
     input: N x C numpy array of the input class activations 
     labels: N x C one-hot vectors giving the classes of the input samples
 
-    output: N x self.out_size numpy array of the output result for each input
+    output: average of cross-entropy losses between labels and softmax of input
     """
     self._input = copy(input)
     loss = np.mean(np.sum(-self._input * labels, axis=1) + logsumexp(self._input, axis=1))
@@ -281,7 +279,26 @@ class SoftmaxLayer:
     return grad_input
 
 
+# Definition of squared loss layer for neural net
+# This layer returns the squared loss given a predicted vector and a label
+class SquaredLoss:
+  def __init__(self):
+    pass
 
+  def forward(self, predictions, labels):
+    """
+    predictions: N x C numpy array of the input class activations 
+    labels: N x C array that the input should match
+
+    output: N x self.out_size numpy array of the output result for each input
+    """
+    self._input = copy(predictions)
+    loss = np.mean(np.sum(np.square(predictions - labels), axis=1))
+    return loss
+
+  def back_prop(self, labels):
+    N = self._input.shape[0]
+    grad_input = 2.0 / N * (self._input - labels)
 
 
 
