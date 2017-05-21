@@ -6,7 +6,7 @@ import sys
 
 
 class Player:
-  def __init__(self):
+  def __init__(self, num_hidden=18):
     pass
 
   def make_move(self, board, player_num):
@@ -42,3 +42,36 @@ class Random_Player(Player):
     return "Random player"
     
 
+
+class QLearner(Player):
+  def __init__(self, num_hidden=18):
+    self.model = nn.NeuralNet()
+    self.model.add_layer(nn.HiddenLayer(9, num_hidden))
+    self.model.add_layer(nn.ReluLayer())
+    self.model.add_layer(nn.HiddenLayer(num_hidden, 9))
+    self.sq = nn.SquaredLoss()
+
+  def make_move(self, board, player_num): 
+    board_ = board.board
+    multiplier = -2 * player_num + 3
+    output = self.model.forward(multiplier*board_.reshape(1,9))
+    move = np.argmax((output - np.min(output)) * (board_.reshape(1,9) == 0))
+    board.make_move(move, player_num)
+    return output, move
+
+  def get_move(self, board, player_num):
+    multiplier = -2 * player_num + 3
+    output = self.model.forward(multiplier*board_.reshape(1,9))
+    return output
+    
+
+  def update(self, player_num, input, label, learning_rate=0.01, weight_decay=0):
+    N = input.size
+    multiplier = -2 * player_num + 3
+    output = self.model.forward(multiplier*input.reshape(1,N))
+    self.sq.forward(output.reshape(1,N), label.reshape(1,N))
+    grad_out = self.sq.back_prop(label.reshape(1,N))
+    self.model.back_prop(grad_out, learning_rate, weight_decay)
+
+  def __str__(self):
+    return "Q learner"

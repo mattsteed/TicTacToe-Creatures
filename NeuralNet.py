@@ -299,6 +299,7 @@ class SquaredLoss:
   def back_prop(self, labels):
     N = self._input.shape[0]
     grad_input = 2.0 / N * (self._input - labels)
+    return grad_input
 
 
 
