@@ -52,12 +52,18 @@ class QLearner(Player):
     self.sq = nn.SquaredLoss()
 
   def make_move(self, board, player_num): 
-    board_ = board.board
+    board_ = board.get_board()
     multiplier = -2 * player_num + 3
     output = self.model.forward(multiplier*board_.reshape(1,9))
-    move = np.argmax((output - np.min(output)) * (board_.reshape(1,9) == 0))
-    board.make_move(move, player_num)
-    return output, move
+    move = np.argmax((output - np.min(output) + 1) * (board_.reshape(1,9) == 0))
+    success = board.make_move(move, player_num)
+    if (success):
+      return output, move
+    else:
+      print("Error: Invalid move selected by learner, player {}".format(player_num))
+      print("Board is:")
+      board.print_board()
+      print("Selected move was {}".format(move))
 
   def get_move(self, board, player_num):
     multiplier = -2 * player_num + 3
@@ -71,7 +77,7 @@ class QLearner(Player):
     output = self.model.forward(multiplier*input.reshape(1,N))
     self.sq.forward(output.reshape(1,N), label.reshape(1,N))
     grad_out = self.sq.back_prop(label.reshape(1,N))
-    self.model.back_prop(grad_out, learning_rate, weight_decay)
+    self.model.rmsprop(grad_out, learning_rate, 10e-6, 0.5, weight_decay)
 
   def __str__(self):
     return "Q learner"
