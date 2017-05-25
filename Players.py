@@ -7,13 +7,10 @@ import sys
 
 class Player:
   def __init__(self, num_hidden=18):
-    pass
+    self.type = "non_learner"
 
   def make_move(self, board, player_num):
     pass
-
-#  def get_player_num(self):
-#    return self.player_num
 
 
 class Human_Player(Player):
@@ -44,12 +41,13 @@ class Random_Player(Player):
 
 
 class QLearner(Player):
-  def __init__(self, num_hidden=18):
+  def __init__(self, num_hidden=150):
     self.model = nn.NeuralNet()
     self.model.add_layer(nn.HiddenLayer(9, num_hidden))
     self.model.add_layer(nn.ReluLayer())
     self.model.add_layer(nn.HiddenLayer(num_hidden, 9))
     self.sq = nn.SquaredLoss()
+    self.type = "learner"
 
   def make_move(self, board, player_num): 
     board_ = board.get_board()
@@ -81,3 +79,8 @@ class QLearner(Player):
 
   def __str__(self):
     return "Q learner"
+
+
+
+
+

@@ -64,4 +64,18 @@ class Board:
     self.board = np.zeros(9)
 
 
-
+# This function returns a board with a random, valid configuration
+def get_random_board():
+  board = Board()
+  moves = np.random.permutation(9)
+  num_moves = np.random.randint(0, 9)
+  for i in range(num_moves):
+    board.make_move(moves[i], i%2+1)
+  while (board.check_for_win(1) or board.check_for_win(2)):
+    board.clear()
+    moves = np.random.permutation(9)
+    num_moves = np.random.randint(0, 7)
+    for i in range(num_moves):
+      board.make_move(moves[i], i%2+1)
+  return board
+      

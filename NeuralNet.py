@@ -290,7 +290,7 @@ class SquaredLoss:
     predictions: N x C numpy array of the input class activations 
     labels: N x C array that the input should match
 
-    output: N x self.out_size numpy array of the output result for each input
+    output: average square loss on the whole input sample
     """
     self._input = copy(predictions)
     loss = np.mean(np.sum(np.square(predictions - labels), axis=1))
